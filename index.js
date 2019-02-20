@@ -38,7 +38,32 @@ server.get("/api/users", (req, res) => {
         )
     })
 
+// Psting a new user
+server.post("/api/users", (req, res) => {
+    const userInfo = req.body;
 
+    if (!userInfo.name) {
+      return res
+        .status(400)
+        .json({
+          errorMessage: "Please make sure the key for the new user in 'name'."
+        });
+    }
+  
+    userDb.insert(userInfo).then(result => {
+      userDb.getById(result.id)
+        .then(user => {
+          res.status(201).json(user);
+        })
+        .catch(err =>
+          res
+            .status(500)
+            .jason({
+              error: "There was an error while saving the user to the database"
+            })
+        );
+    });
+  });
 
 
 
