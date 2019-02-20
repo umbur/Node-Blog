@@ -9,6 +9,13 @@ const helmet = require("helmet");
 server.use(express.json());
 server.use(helmet())
 
+// Custom Middleware
+const capitalCheck = (req, res, next) => {
+    req.body.name = req.body.name.split(' ').map((name) => 
+    name.charAt(0).toUpperCase() + name.substring(1)).join(' ')
+    next()
+}
+
 // Users Endpoint
 // Getting all the users
 server.get("/api/users", (req, res) => {
@@ -39,7 +46,7 @@ server.get("/api/users", (req, res) => {
     })
 
 // Psting a new user
-server.post("/api/users", (req, res) => {
+server.post("/api/users", capitalCheck, (req, res) => {
     const userInfo = req.body;
 
     if (!userInfo.name) {
@@ -86,7 +93,7 @@ server.delete('/api/users/:id', (req, res) => {
 
 
 // Updating the user
-server.put('/api/users/:id', (req, res) => {
+server.put('/api/users/:id', capitalCheck, (req, res) => {
     const id = req.params.id;
     const changes = req.body;
 
@@ -115,4 +122,6 @@ server.put('/api/users/:id', (req, res) => {
 server.listen(5000, () => {
     console.log('\n* Server Running on http://localhost:5000 *\n');
   });
+
+
    
