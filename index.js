@@ -66,7 +66,7 @@ server.post("/api/users", (req, res) => {
   });
 
 // Deleting the user
-server.delete('/api/user/:id', (req, res) => {
+server.delete('/api/users/:id', (req, res) => {
     const id = req.params.id
 
     userDb.remove(id)
@@ -84,6 +84,30 @@ server.delete('/api/user/:id', (req, res) => {
     })
 })
 
+
+// Updating the user
+server.put('/api/users/:id', (req, res) => {
+    const id = req.params.id;
+    const changes = req.body;
+
+    userDb.get(id).then(user => {
+        if(!user){
+            return res.status(404).json({ message: 'The user with the specified ID does not exist.' })
+        } else if(!changes.name) {
+            return res.status(400).json({ errorMessage: "Please make sure the key for the new user in 'name'."})
+        } else {
+            userDb.update(id, changes).then( () => {
+                res.status(200).json({ success: 'The user has been updated', id })
+            })
+            .catch(err => {
+                res.status(500).json({ error:'The user information could not be modified.'})
+            })
+        }
+    })
+
+
+
+})
 
 
 
